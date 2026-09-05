@@ -9,18 +9,21 @@
         "editor.defaultFormatter": "biomejs.biome"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[javascriptreact]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
     "[typescriptreact]": {
-        "editor.defaultFormatter": "fronterior.biome-monorepo"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[json]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
     "[jsonc]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[css]": {
         "editor.defaultFormatter": "biomejs.biome"
     }
 }
