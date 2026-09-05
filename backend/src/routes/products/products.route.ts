@@ -4,6 +4,7 @@ import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
 import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
 import { searchHemkopProducts } from "../../retailers/hemkop/hemkop.client.ts";
 import { searchCoopProducts } from "../../retailers/coop/coop.client.ts";
+import { searchCityGrossProducts } from "../../retailers/citygross/citygross.client.ts";
 
 const ICA_STORE_ID = process.env.ICA_STORE_ID;
 if (!ICA_STORE_ID) {
@@ -46,6 +47,9 @@ router.get("/", async (req, res) => {
                 subscriptionKey: COOP_SUBSCRIPTION_KEY,
                 storeId: COOP_STORE_ID
             });
+        }
+        if (retailer === "citygross") {
+            products = await searchCityGrossProducts({ query })
         }
         res.json(products);
     } catch (error) {
