@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import express, { type Express, type Request, type Response } from 'express';
 import productsRouter from './routes/products/products.route.ts';
 
