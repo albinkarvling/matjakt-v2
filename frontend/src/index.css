@@ -14,3 +14,18 @@
     --color-brand-primary: #03ad03;
     --color-brand-secondary: #028f02;
 }
+
+html[mode="dark"] {
+    --color-bg-primary: #101214;
+    --color-bg-secondary: #16181b;
+    --color-bg-tertiary: #21262b;
+
+    --color-text-primary: #f7f7f9;
+    --color-text-secondary: #b5bec9;
+    --color-text-tertiary: #8b95a1;
+}
+
+body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
