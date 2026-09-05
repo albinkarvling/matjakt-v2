@@ -3,10 +3,20 @@ import type { Product } from "../../types/product.ts";
 import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
 import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
 import { searchHemkopProducts } from "../../retailers/hemkop/hemkop.client.ts";
+import { searchCoopProducts } from "../../retailers/coop/coop.client.ts";
 
 const ICA_STORE_ID = process.env.ICA_STORE_ID;
 if (!ICA_STORE_ID) {
     throw new Error("ICA_STORE_ID environment variable is not set");
+}
+
+const COOP_SUBSCRIPTION_KEY = process.env.COOP_SUBSCRIPTION_KEY;
+if (!COOP_SUBSCRIPTION_KEY) {
+    throw new Error("COOP_SUBSCRIPTION_KEY environment variable is not set");
+}
+const COOP_STORE_ID = process.env.COOP_STORE_ID;
+if (!COOP_STORE_ID) {
+    throw new Error("COOP_STORE_ID environment variable is not set");
 }
 
 const router = express.Router();
@@ -29,6 +39,13 @@ router.get("/", async (req, res) => {
         }
         if (retailer === "hemkop") {
             products = await searchHemkopProducts({ query });
+        }
+        if (retailer === "coop") {
+            products = await searchCoopProducts({
+                query,
+                subscriptionKey: COOP_SUBSCRIPTION_KEY,
+                storeId: COOP_STORE_ID
+            });
         }
         res.json(products);
     } catch (error) {

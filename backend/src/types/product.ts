@@ -22,7 +22,7 @@ export type Product = {
     retailerProductId: string;
 
     gtin: string | null;
-    gtinSource: "image-url" | null;
+    gtinSource: "image-url" | "retailer-api" | null;
 
     name: string;
     brand: string | null;
