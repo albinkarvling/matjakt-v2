@@ -5,8 +5,6 @@ import { mapIcaProduct } from "./ica.mapper.ts";
 import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 
 const ICA_BASE_URL = "https://handlaprivatkund.ica.se/stores";
-const EMPTY_GTIN_MAP: ReadonlyMap<string, string> =
-    new Map();
 
 export async function searchIcaProducts(
     storeId: string,

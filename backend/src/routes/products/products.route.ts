@@ -1,5 +1,6 @@
 import express from "express";
 import type { Product } from "../../types/product.ts";
+import { searchAllProducts } from "../../libs/search/searchProducts.ts";
 import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
 import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
 import { searchHemkopProducts } from "../../retailers/hemkop/hemkop.client.ts";
@@ -23,37 +24,36 @@ if (!COOP_STORE_ID) {
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    const query = req.query.q as string;
-    const retailer = req.query.retailer as string;
+    const query =
+        typeof req.query.q === "string"
+            ? req.query.q.trim()
+            : "";
 
     if (!query) {
-        return res.status(400).json({ error: "Query parameter 'q' is required" });
+        return res.status(400).json({
+            error: "Query parameter 'q' is required",
+        });
     }
 
     try {
-        let products: Product[] = [];
-        if (retailer === "willys") {
-            products = await searchWillysProducts({ query });
-        }
-        if (retailer === "ica") {
-            products = await searchIcaProducts(ICA_STORE_ID, query);
-        }
-        if (retailer === "hemkop") {
-            products = await searchHemkopProducts({ query });
-        }
-        if (retailer === "coop") {
-            products = await searchCoopProducts({
-                query,
-                subscriptionKey: COOP_SUBSCRIPTION_KEY,
-                storeId: COOP_STORE_ID
-            });
-        }
-        if (retailer === "citygross") {
-            products = await searchCityGrossProducts({ query })
-        }
-        res.json(products);
+        const result = await searchAllProducts({
+            query,
+            icaStoreId: ICA_STORE_ID,
+            coopStoreId: COOP_STORE_ID,
+            coopSubscriptionKey:
+                COOP_SUBSCRIPTION_KEY,
+        });
+
+        return res.json(result);
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch products" });
+        console.error(
+            "Grouped product search failed",
+            error,
+        );
+
+        return res.status(500).json({
+            error: "Failed to search products",
+        });
     }
 });
 

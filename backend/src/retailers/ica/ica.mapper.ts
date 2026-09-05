@@ -3,8 +3,6 @@ import { cleanBrand, forceHttps, toMoney } from "../../libs/product.ts";
 import type { IcaProduct } from "../../types/retailers/ica.ts";
 import type { Product, UnitPrice } from "../../types/product.ts";
 
-const EMPTY_GTIN_MAP: ReadonlyMap<string, string> = new Map();
-
 export function mapIcaProduct(
     raw: IcaProduct,
 ): Product {
