@@ -4,7 +4,7 @@ import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
 import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
 
 const ICA_STORE_ID = process.env.ICA_STORE_ID;
-if(!ICA_STORE_ID) {
+if (!ICA_STORE_ID) {
     throw new Error("ICA_STORE_ID environment variable is not set");
 }
 
