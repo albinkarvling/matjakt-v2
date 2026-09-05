@@ -6,10 +6,10 @@ import type {
 } from "../../types/axfood/axfood.ts";
 import { mapAxfoodProduct } from "../axfood/axfood.mapper.ts";
 
-const WILLYS_BASE_URL = "https://www.willys.se";
+const HEMKOP_BASE_URL = "https://www.hemkop.se";
 const DEFAULT_PAGE_SIZE = 20;
 
-export async function searchWillysProducts({
+export async function searchHemkopProducts({
     query,
     page = 0,
     size = DEFAULT_PAGE_SIZE,
@@ -24,7 +24,7 @@ export async function searchWillysProducts({
         return [];
     }
 
-    const url = new URL("/axfood/rest/v1/search", WILLYS_BASE_URL);
+    const url = new URL("/axfood/rest/v1/search", HEMKOP_BASE_URL);
 
     url.searchParams.set("q", normalizedQuery);
     url.searchParams.set("page", String(page));
@@ -34,13 +34,13 @@ export async function searchWillysProducts({
         headers: {
             accept: "application/json",
             "user-agent": BROWSER_USER_AGENT,
-            referer: `${WILLYS_BASE_URL}/`,
+            referer: `${HEMKOP_BASE_URL}/`,
         },
     });
 
     return response.results
         .map((product: WillysApiProduct) =>
-            mapAxfoodProduct(product, "willys"),
+            mapAxfoodProduct(product, "hemkop"),
         )
         .filter((product): product is Product => product !== null);
 }
