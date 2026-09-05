@@ -5,7 +5,7 @@ import type {
     Retailer,
     UnitPrice,
 } from "../../types/product.ts";
-import type { WillysApiProduct } from "../../types/axfood/axfood.ts";
+import type { WillysApiProduct } from "../../types/retailers/axfood.ts";
 
 type AxfoodRetailer = Extract<
     Retailer,

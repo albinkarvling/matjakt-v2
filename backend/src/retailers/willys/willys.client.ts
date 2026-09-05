@@ -3,7 +3,7 @@ import type { Product } from "../../types/product.ts";
 import type {
     WillysApiProduct,
     WillysSearchResponse,
-} from "../../types/axfood/axfood.ts";
+} from "../../types/retailers/axfood.ts";
 import { mapAxfoodProduct } from "../axfood/axfood.mapper.ts";
 
 const WILLYS_BASE_URL = "https://www.willys.se";

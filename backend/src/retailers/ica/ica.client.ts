@@ -1,5 +1,5 @@
 import { fetchJson } from "../../libs/http.ts";
-import type { IcaSearchResponse } from "../../types/ica/ica.ts";
+import type { IcaSearchResponse } from "../../types/retailers/ica.ts";
 import type { Product } from "../../types/product.ts";
 import { mapIcaProduct } from "./ica.mapper.ts";
 

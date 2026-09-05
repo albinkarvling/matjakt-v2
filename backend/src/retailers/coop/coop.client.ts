@@ -1,5 +1,5 @@
 import { fetchJson } from "../../libs/http.ts";
-import type { CoopSearchResponse } from "../../types/coop/coop.ts";
+import type { CoopSearchResponse } from "../../types/retailers/coop.ts";
 import type { Product } from "../../types/product.ts";
 import { mapCoopProduct } from "./coop.mapper.ts";
 

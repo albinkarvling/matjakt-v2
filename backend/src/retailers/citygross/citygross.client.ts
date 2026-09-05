@@ -2,7 +2,7 @@ import { fetchJson } from "../../libs/http.ts";
 import type {
     CityGrossApiProduct,
     CityGrossSearchResponse,
-} from "../../types/citygross/citygross.ts";
+} from "../../types/retailers/citygross.ts";
 import type { Product } from "../../types/product.ts";
 import { mapCityGrossProduct } from "./citygross.mapper.ts";
 

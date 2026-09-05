@@ -1,6 +1,6 @@
 import { normalizeGtin } from "../../libs/gtin.ts";
 import { cleanBrand, forceHttps, toMoney } from "../../libs/product.ts";
-import type { CityGrossApiProduct } from "../../types/citygross/citygross.ts";
+import type { CityGrossApiProduct } from "../../types/retailers/citygross.ts";
 import type { Product, UnitPrice } from "../../types/product.ts";
 
 export function mapCityGrossProduct(raw: CityGrossApiProduct): Product | null {

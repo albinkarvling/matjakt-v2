@@ -1,6 +1,6 @@
 import { normalizeGtin } from "../../libs/gtin.ts";
 import { cleanBrand, forceHttps, toMoney } from "../../libs/product.ts";
-import type { CoopProduct } from "../../types/coop/coop.ts";
+import type { CoopProduct } from "../../types/retailers/coop.ts";
 import type { Product, UnitPrice } from "../../types/product.ts";
 
 export function mapCoopProduct(raw: CoopProduct): Product | null {
