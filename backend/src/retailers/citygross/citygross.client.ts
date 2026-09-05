@@ -5,6 +5,7 @@ import type {
 } from "../../types/retailers/citygross.ts";
 import type { Product } from "../../types/product.ts";
 import { mapCityGrossProduct } from "./citygross.mapper.ts";
+import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 
 const CITY_GROSS_BASE_URL = "https://www.citygross.se";
 
@@ -24,7 +25,7 @@ export async function searchCityGrossProducts({ query }: Params): Promise<Produc
     url.searchParams.set("SearchQuery", normalizedQuery);
     url.searchParams.set("skip", "0");
     url.searchParams.set("store", "");
-    url.searchParams.set("take", "20");
+    url.searchParams.set("take", String(MAX_PAGE_SIZE));
 
     const response = await fetchJson<CityGrossSearchResponse>(url.toString());
 

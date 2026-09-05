@@ -2,6 +2,7 @@ import { fetchJson } from "../../libs/http.ts";
 import type { IcaSearchResponse } from "../../types/retailers/ica.ts";
 import type { Product } from "../../types/product.ts";
 import { mapIcaProduct } from "./ica.mapper.ts";
+import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 
 const ICA_BASE_URL = "https://handlaprivatkund.ica.se/stores";
 const EMPTY_GTIN_MAP: ReadonlyMap<string, string> =
@@ -16,8 +17,8 @@ export async function searchIcaProducts(
     );
 
     url.searchParams.set("q", query);
-    url.searchParams.set("maxPageSize", "20");
-    url.searchParams.set("maxProductsToDecorate", "20");
+    url.searchParams.set("maxPageSize", String(MAX_PAGE_SIZE));
+    url.searchParams.set("maxProductsToDecorate", String(MAX_PAGE_SIZE));
     url.searchParams.set("includeAdditionalPageInfo", "true");
     url.searchParams.set("tag", "web");
 

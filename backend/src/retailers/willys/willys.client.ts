@@ -1,3 +1,4 @@
+import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 import { BROWSER_USER_AGENT, fetchJson } from "../../libs/http.ts";
 import type { Product } from "../../types/product.ts";
 import type {
@@ -7,12 +8,11 @@ import type {
 import { mapAxfoodProduct } from "../axfood/axfood.mapper.ts";
 
 const WILLYS_BASE_URL = "https://www.willys.se";
-const DEFAULT_PAGE_SIZE = 20;
 
 export async function searchWillysProducts({
     query,
     page = 0,
-    size = DEFAULT_PAGE_SIZE,
+    size = MAX_PAGE_SIZE,
 }: {
     query: string;
     page?: number;

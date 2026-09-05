@@ -2,6 +2,7 @@ import { fetchJson } from "../../libs/http.ts";
 import type { CoopSearchResponse } from "../../types/retailers/coop.ts";
 import type { Product } from "../../types/product.ts";
 import { mapCoopProduct } from "./coop.mapper.ts";
+import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 
 const COOP_BASE_URL =
     "https://external.api.coop.se/personalization/search/global";
@@ -37,7 +38,7 @@ export async function searchCoopProducts({
             query,
             resultsOptions: {
                 skip: 0,
-                take: 20,
+                take: MAX_PAGE_SIZE,
                 sortBy: [],
                 facets: [],
             },
