@@ -5,6 +5,12 @@ function includesAny(text: string, terms: readonly string[]): boolean {
     return terms.some((term) => text.includes(term));
 }
 
+function includesWordOrCompoundEndingWith(text: string, terms: readonly string[]): boolean {
+    const words = text.split(" ");
+
+    return terms.some((term) => words.some((word) => word === term || word.endsWith(term)));
+}
+
 export function classifyProduct(product: Product): ProductCategory {
     const text = normalizeText(`${product.name} ${product.brand ?? ""}`);
 
@@ -78,7 +84,7 @@ export function classifyProduct(product: Product): ProductCategory {
         return "flavored-milk";
     }
 
-    if (includesAny(text, ["mjolk", "mellanmjolk", "lattmjolk", "standardmjolk", "mjolkdryck"])) {
+    if (includesWordOrCompoundEndingWith(text, ["mjolk", "mjolkdryck"])) {
         return "milk";
     }
 

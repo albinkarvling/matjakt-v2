@@ -8,6 +8,8 @@ import type { ProductFilter, ProductGroup, SearchProductResponse } from "../../t
 import { ProductFilters } from "./ProductFilters/ProductFilters";
 import { SearchResult } from "./SearchResult/SearchResult";
 
+const DEFAULT_VISIBLE_RESULT_COUNT = 20;
+
 export const SearchPage = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -18,6 +20,8 @@ export const SearchPage = () => {
     const [groups, setGroups] = useState<ProductGroup[]>([]);
     const [filters, setFilters] = useState<ProductFilter[]>([]);
     const [selectedFilter, setSelectedFilter] = useState<string[]>([]);
+
+    const [showAllGroups, setShowAllGroups] = useState(false);
 
     useEffect(() => {
         if (!query) return;
@@ -52,12 +56,35 @@ export const SearchPage = () => {
         navigate(`/search?q=${localQuery}`);
     };
 
-    const visibleGroups = useMemo(() => {
+    const filteredGroups =
+        selectedFilter.length === 0
+            ? groups
+            : groups.filter((group) => {
+                  const quantity = group.canonicalProduct.identity.quantity;
+
+                  if (!quantity) {
+                      return false;
+                  }
+
+                  const value = `${quantity.unit}:${quantity.value}`;
+
+                  return selectedFilter.includes(value);
+              });
+
+    const visibleGroups = showAllGroups
+        ? filteredGroups
+        : filteredGroups.slice(0, DEFAULT_VISIBLE_RESULT_COUNT);
+
+    const hiddenResultCount = Math.max(0, filteredGroups.length - DEFAULT_VISIBLE_RESULT_COUNT);
+
+    const memoizedVisibleGroups = useMemo(() => {
+        const shownGroups = showAllGroups ? groups : visibleGroups;
+
         if (selectedFilter.length === 0) {
-            return groups;
+            return shownGroups;
         }
 
-        return groups.filter((group) => {
+        return shownGroups.filter((group) => {
             const quantity = group.canonicalProduct.identity.quantity;
 
             if (!quantity) {
@@ -68,7 +95,7 @@ export const SearchPage = () => {
 
             return selectedFilter.includes(filterValue);
         });
-    }, [groups, selectedFilter]);
+    }, [groups, visibleGroups, showAllGroups, selectedFilter]);
 
     return (
         <main className="min-h-screen bg-bg-primary">
@@ -105,11 +132,21 @@ export const SearchPage = () => {
                 />
 
                 <div className="flex min-w-0 flex-1 flex-col gap-5">
-                    {visibleGroups.map((group) => (
+                    {memoizedVisibleGroups.map((group) => (
                         <SearchResult group={group} key={group.key} />
                     ))}
 
-                    {groups.length > 0 && visibleGroups.length === 0 && (
+                    {hiddenResultCount > 0 && !showAllGroups && (
+                        <button
+                            onClick={() => setShowAllGroups(true)}
+                            className="text-primary underline"
+                            type="button"
+                        >
+                            Visa fler produkter
+                        </button>
+                    )}
+
+                    {groups.length > 0 && memoizedVisibleGroups.length === 0 && (
                         <p className="text-text-secondary">
                             Inga produkter matchar de valda filtren.
                         </p>

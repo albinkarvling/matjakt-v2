@@ -1,7 +1,7 @@
 import { searchCityGrossProducts } from "../../retailers/citygross/citygross.client.ts";
 import { searchCoopProducts } from "../../retailers/coop/coop.client.ts";
 import { searchHemkopProducts } from "../../retailers/hemkop/hemkop.client.ts";
-import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
+// import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
 import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
 import type {
     Product,
@@ -17,15 +17,18 @@ import { normalizeSearchProduct } from "./normalizeProduct.ts";
 import { parseQuery } from "./parseQuery.ts";
 import { scoreProductGroup } from "./scoreProductGroup.ts";
 
+const FILTER_SOURCE_LIMIT = 30;
+
 export async function searchAllProducts({
     query,
-    icaStoreId,
+    // icaStoreId,
     coopStoreId,
     coopSubscriptionKey,
     retailers = ["ica", "coop", "willys", "hemkop", "cityGross"],
 }: SearchOptions): Promise<ProductSearchResponse> {
     const searches: Partial<Record<Retailer, () => Promise<Product[]>>> = {
-        ica: () => searchIcaProducts(icaStoreId, query),
+        // temporarily disabled ICA search
+        // ica: () => searchIcaProducts(icaStoreId, query),
         coop: () =>
             searchCoopProducts({
                 query,
@@ -85,9 +88,11 @@ export async function searchAllProducts({
             return b.offers.length - a.offers.length;
         });
 
+    const filters = createProductFilters(groups.slice(0, FILTER_SOURCE_LIMIT));
+
     return {
         groups,
-        filters: createProductFilters(groups),
+        filters,
         retailers: results,
     };
 }

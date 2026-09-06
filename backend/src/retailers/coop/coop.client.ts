@@ -1,11 +1,10 @@
-import { fetchJson } from "../../libs/http.ts";
-import type { CoopSearchResponse } from "../../types/retailers/coop.ts";
-import type { Product } from "../../types/product.ts";
-import { mapCoopProduct } from "./coop.mapper.ts";
 import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
+import { fetchJson } from "../../libs/http.ts";
+import type { Product } from "../../types/product.ts";
+import type { CoopSearchResponse } from "../../types/retailers/coop.ts";
+import { mapCoopProduct } from "./coop.mapper.ts";
 
-const COOP_BASE_URL =
-    "https://external.api.coop.se/personalization/search/global";
+const COOP_BASE_URL = "https://external.api.coop.se/personalization/search/global";
 
 type SearchCoopProductsOptions = {
     storeId: string;
@@ -49,8 +48,7 @@ export async function searchCoopProducts({
     });
 
     const items = response.results.items;
+    console.log(items?.at(0));
 
-    return items
-        .map(mapCoopProduct)
-        .filter((product): product is Product => product !== null);
+    return items.map(mapCoopProduct).filter((product): product is Product => product !== null);
 }

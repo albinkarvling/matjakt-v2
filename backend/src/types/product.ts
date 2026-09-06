@@ -76,7 +76,7 @@ export type ProductScoreDetails = {
     categoryMatch: number;
     modifierMatch: number;
     packageSuitability: number;
-    retailerConsensus: number;
+    retailerRelevance: number;
     availability: number;
     mismatchPenalty: number;
 };
