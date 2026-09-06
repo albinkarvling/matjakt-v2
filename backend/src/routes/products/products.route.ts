@@ -1,11 +1,5 @@
 import express from "express";
-import type { Product } from "../../types/product.ts";
-import { searchAllProducts } from "../../libs/search/searchProducts.ts";
-import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
-import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
-import { searchHemkopProducts } from "../../retailers/hemkop/hemkop.client.ts";
-import { searchCoopProducts } from "../../retailers/coop/coop.client.ts";
-import { searchCityGrossProducts } from "../../retailers/citygross/citygross.client.ts";
+import { searchProductsWithCache } from "../../libs/search/searchProductsWithCache.ts";
 
 const ICA_STORE_ID = process.env.ICA_STORE_ID;
 if (!ICA_STORE_ID) {
@@ -24,32 +18,31 @@ if (!COOP_STORE_ID) {
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    const query =
-        typeof req.query.q === "string"
-            ? req.query.q.trim()
-            : "";
+    const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
 
-    if (!query) {
+    if (query.length < 2) {
         return res.status(400).json({
-            error: "Query parameter 'q' is required",
+            error: "Search query must contain at least 2 characters",
+        });
+    }
+
+    if (query.length > 100) {
+        return res.status(400).json({
+            error: "Search query must not exceed 100 characters",
         });
     }
 
     try {
-        const result = await searchAllProducts({
+        const result = await searchProductsWithCache({
             query,
             icaStoreId: ICA_STORE_ID,
             coopStoreId: COOP_STORE_ID,
-            coopSubscriptionKey:
-                COOP_SUBSCRIPTION_KEY,
+            coopSubscriptionKey: COOP_SUBSCRIPTION_KEY,
         });
 
         return res.json(result);
     } catch (error) {
-        console.error(
-            "Grouped product search failed",
-            error,
-        );
+        console.error("Grouped product search failed", error);
 
         return res.status(500).json({
             error: "Failed to search products",

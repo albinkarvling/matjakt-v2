@@ -1,10 +1,4 @@
-export type Retailer =
-    | "ica"
-    | "coop"
-    | "willys"
-    | "hemkop"
-    | "cityGross"
-    | "lidl";
+export type Retailer = "ica" | "coop" | "willys" | "hemkop" | "cityGross" | "lidl";
 
 export type Money = {
     amount: string;
@@ -90,4 +84,24 @@ export type ProductGroup = {
     offers: SearchProduct[];
     score: number;
     scoreDetails: ProductScoreDetails;
+};
+
+// for search & database queries
+export type SearchOptions = {
+    query: string;
+    icaStoreId: string;
+    coopStoreId: string;
+    coopSubscriptionKey: string;
+    retailers?: Retailer[];
+};
+
+export type RetailerResult = {
+    retailer: Retailer;
+    products: Product[];
+    error: string | null;
+};
+
+export type ProductSearchResult = {
+    groups: ProductGroup[];
+    retailers: RetailerResult[];
 };

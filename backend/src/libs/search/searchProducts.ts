@@ -1,66 +1,38 @@
-import type {
-    Product,
-    ProductGroup,
-    Retailer,
-} from "../../types/product.ts";
 import { searchCityGrossProducts } from "../../retailers/citygross/citygross.client.ts";
 import { searchCoopProducts } from "../../retailers/coop/coop.client.ts";
 import { searchHemkopProducts } from "../../retailers/hemkop/hemkop.client.ts";
 import { searchIcaProducts } from "../../retailers/ica/ica.client.ts";
 import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
+import type {
+    Product,
+    ProductGroup,
+    ProductSearchResult,
+    Retailer,
+    SearchOptions,
+} from "../../types/product.ts";
 import { groupProducts } from "./groupProducts.ts";
 import { normalizeSearchProduct } from "./normalizeProduct.ts";
 import { parseQuery } from "./parseQuery.ts";
 import { scoreProductGroup } from "./scoreProductGroup.ts";
-
-type SearchOptions = {
-    query: string;
-    icaStoreId: string;
-    coopStoreId: string;
-    coopSubscriptionKey: string;
-    retailers?: Retailer[];
-};
-
-type RetailerResult = {
-    retailer: Retailer;
-    products: Product[];
-    error: string | null;
-};
 
 export async function searchAllProducts({
     query,
     icaStoreId,
     coopStoreId,
     coopSubscriptionKey,
-    retailers = [
-        "ica",
-        "coop",
-        "willys",
-        "hemkop",
-        "cityGross",
-    ],
-}: SearchOptions): Promise<{
-    groups: ProductGroup[];
-    retailers: RetailerResult[];
-}> {
-    const searches: Partial<
-        Record<Retailer, () => Promise<Product[]>>
-    > = {
-        ica: () =>
-            searchIcaProducts(icaStoreId, query),
+    retailers = ["ica", "coop", "willys", "hemkop", "cityGross"],
+}: SearchOptions): Promise<ProductSearchResult> {
+    const searches: Partial<Record<Retailer, () => Promise<Product[]>>> = {
+        ica: () => searchIcaProducts(icaStoreId, query),
         coop: () =>
             searchCoopProducts({
                 query,
                 storeId: coopStoreId,
-                subscriptionKey:
-                    coopSubscriptionKey,
+                subscriptionKey: coopSubscriptionKey,
             }),
-        willys: () =>
-            searchWillysProducts({ query }),
-        hemkop: () =>
-            searchHemkopProducts({ query }),
-        cityGross: () =>
-            searchCityGrossProducts({ query }),
+        willys: () => searchWillysProducts({ query }),
+        hemkop: () => searchHemkopProducts({ query }),
+        cityGross: () => searchCityGrossProducts({ query }),
     };
 
     const results = await Promise.all(
@@ -82,10 +54,7 @@ export async function searchAllProducts({
                     error: null,
                 };
             } catch (error) {
-                console.error(
-                    `Product search failed for ${retailer}`,
-                    error,
-                );
+                console.error(`Product search failed for ${retailer}`, error);
 
                 return {
                     retailer,
@@ -96,32 +65,21 @@ export async function searchAllProducts({
         }),
     );
 
-    const normalizedProducts = results.flatMap(
-        ({ products }) =>
-            products.map((product, retailerRank) =>
-                normalizeSearchProduct(
-                    product,
-                    retailerRank,
-                ),
-            ),
+    const normalizedProducts = results.flatMap(({ products }) =>
+        products.map((product, retailerRank) => normalizeSearchProduct(product, retailerRank)),
     );
 
     const intent = parseQuery(query);
 
     const groups = groupProducts(normalizedProducts)
-        .map((group) =>
-            scoreProductGroup(group, intent),
-        )
+        .map((group) => scoreProductGroup(group, intent))
         .map(sortOffers)
         .sort((a, b) => {
             if (a.score !== b.score) {
                 return b.score - a.score;
             }
 
-            return (
-                b.offers.length -
-                a.offers.length
-            );
+            return b.offers.length - a.offers.length;
         });
 
     return {
@@ -130,22 +88,15 @@ export async function searchAllProducts({
     };
 }
 
-function sortOffers(
-    group: ProductGroup,
-): ProductGroup {
+function sortOffers(group: ProductGroup): ProductGroup {
     return {
         ...group,
         offers: [...group.offers].sort((a, b) => {
             if (a.available !== b.available) {
-                return a.available === true
-                    ? -1
-                    : 1;
+                return a.available === true ? -1 : 1;
             }
 
-            return (
-                Number(a.price.amount) -
-                Number(b.price.amount)
-            );
+            return Number(a.price.amount) - Number(b.price.amount);
         }),
     };
 }
