@@ -6,11 +6,13 @@ import { searchWillysProducts } from "../../retailers/willys/willys.client.ts";
 import type {
     Product,
     ProductGroup,
-    ProductSearchResult,
+    ProductSearchResponse,
     Retailer,
     SearchOptions,
 } from "../../types/product.ts";
+import { createProductFilters } from "./createProductFilters.ts";
 import { groupProducts } from "./groupProducts.ts";
+import { isRelevantProductGroup } from "./isRelevantProductGroup.ts";
 import { normalizeSearchProduct } from "./normalizeProduct.ts";
 import { parseQuery } from "./parseQuery.ts";
 import { scoreProductGroup } from "./scoreProductGroup.ts";
@@ -21,7 +23,7 @@ export async function searchAllProducts({
     coopStoreId,
     coopSubscriptionKey,
     retailers = ["ica", "coop", "willys", "hemkop", "cityGross"],
-}: SearchOptions): Promise<ProductSearchResult> {
+}: SearchOptions): Promise<ProductSearchResponse> {
     const searches: Partial<Record<Retailer, () => Promise<Product[]>>> = {
         ica: () => searchIcaProducts(icaStoreId, query),
         coop: () =>
@@ -73,6 +75,7 @@ export async function searchAllProducts({
 
     const groups = groupProducts(normalizedProducts)
         .map((group) => scoreProductGroup(group, intent))
+        .filter((group) => isRelevantProductGroup(group, intent))
         .map(sortOffers)
         .sort((a, b) => {
             if (a.score !== b.score) {
@@ -84,6 +87,7 @@ export async function searchAllProducts({
 
     return {
         groups,
+        filters: createProductFilters(groups),
         retailers: results,
     };
 }

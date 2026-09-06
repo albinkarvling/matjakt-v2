@@ -1,7 +1,7 @@
 import { normalizeGtin } from "../../libs/gtin.ts";
 import { cleanBrand, forceHttps, toMoney } from "../../libs/product.ts";
-import type { CoopProduct } from "../../types/retailers/coop.ts";
 import type { Product, UnitPrice } from "../../types/product.ts";
+import type { CoopProduct } from "../../types/retailers/coop.ts";
 
 export function mapCoopProduct(raw: CoopProduct): Product | null {
     const price = raw.salesPriceData?.b2cPrice;
@@ -35,15 +35,14 @@ export function mapCoopProduct(raw: CoopProduct): Product | null {
 
         price: toMoney(price),
         unitPrice,
+        priceBasis: "item",
 
         imageUrl: normalizeCoopImageUrl(raw.imageUrl),
         available: raw.availableOnline ?? null,
     };
 }
 
-function normalizeCoopImageUrl(
-    value: string | null | undefined,
-): string | null {
+function normalizeCoopImageUrl(value: string | null | undefined): string | null {
     const url = forceHttps(value);
 
     if (!url) {

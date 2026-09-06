@@ -1,50 +1,119 @@
 import { ArrowForward, Search } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { baseFetch } from "../../api/baseFetch";
 import { Button } from "../../components/Button/Button";
 import { TextField } from "../../components/TextField/TextField";
-import type { ProductGroup } from "../../types/product";
+import type { ProductFilter, ProductGroup, SearchProductResponse } from "../../types/product";
+import { ProductFilters } from "./ProductFilters/ProductFilters";
 import { SearchResult } from "./SearchResult/SearchResult";
 
 export const SearchPage = () => {
-    const [query, setQuery] = useState("");
-    const [result, setResult] = useState<ProductGroup[]>([]);
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const query = searchParams.get("q") ?? "";
 
-        const response = await baseFetch<{ groups: ProductGroup[] }>(`/products?q=${query}`);
-        setResult(response.groups);
+    const [localQuery, setLocalQuery] = useState(query);
+    const [groups, setGroups] = useState<ProductGroup[]>([]);
+    const [filters, setFilters] = useState<ProductFilter[]>([]);
+    const [selectedFilter, setSelectedFilter] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (!query) return;
+
+        const fetchData = async () => {
+            setLocalQuery(query);
+            setSelectedFilter([]);
+            setGroups([]);
+            setFilters([]);
+
+            const response = await baseFetch<SearchProductResponse>(
+                `/products?q=${encodeURIComponent(query)}`,
+            );
+
+            setGroups(response.groups);
+            setFilters(response.filters);
+        };
+
+        fetchData();
+    }, [query]);
+
+    const handleSubmit = async (event: React.SubmitEvent) => {
+        event.preventDefault();
+
+        if (!localQuery) return;
+
+        setLocalQuery(localQuery);
+        setSelectedFilter([]);
+        setGroups([]);
+        setFilters([]);
+
+        navigate(`/search?q=${localQuery}`);
     };
 
+    const visibleGroups = useMemo(() => {
+        if (selectedFilter.length === 0) {
+            return groups;
+        }
+
+        return groups.filter((group) => {
+            const quantity = group.canonicalProduct.identity.quantity;
+
+            if (!quantity) {
+                return false;
+            }
+
+            const filterValue = `${quantity.unit}:${quantity.value}`;
+
+            return selectedFilter.includes(filterValue);
+        });
+    }, [groups, selectedFilter]);
+
     return (
-        <main className="bg-bg-primary min-h-screen">
-            <div className="py-12 border-b border-b-bg-tertiary">
-                <h1 className="text-3xl text-center">Vad vill du jämföra?</h1>
+        <main className="min-h-screen bg-bg-primary">
+            <div className="border-b border-b-bg-tertiary py-12">
+                <h1 className="text-center text-3xl">Vad vill du jämföra?</h1>
+
                 <p className="mt-1 text-center">
                     Jämför samma produkt från olika butiker, alltid med bästa pris.
                 </p>
 
                 <form
                     onSubmit={handleSubmit}
-                    className="w-132 mt-5 mx-auto flex items-center gap-3"
+                    className="mx-auto mt-5 flex w-132 items-center gap-3"
                 >
                     <TextField
                         startItem={<Search />}
                         label="Sök efter mjölk, nötfärs, etc"
-                        value={query}
-                        onChange={setQuery}
+                        value={localQuery}
+                        onChange={setLocalQuery}
                         className="flex-1"
                     />
+
                     <Button endItem={<ArrowForward />} type="submit">
                         Jämför
                     </Button>
                 </form>
             </div>
-            <div className="w-212 mx-auto py-12">
-                <div className="flex flex-col gap-5">
-                    {result.length !== 0 &&
-                        result.map((group) => <SearchResult group={group} key={group.key} />)}
+
+            <div className="mx-auto w-260 py-12">
+                <ProductFilters
+                    filters={filters}
+                    selectedValue={selectedFilter[0] ?? ""}
+                    onChange={(value) => setSelectedFilter(value ? [value] : [])}
+                />
+
+                <div className="flex min-w-0 flex-1 flex-col gap-5">
+                    {visibleGroups.map((group) => (
+                        <SearchResult group={group} key={group.key} />
+                    ))}
+
+                    {groups.length > 0 && visibleGroups.length === 0 && (
+                        <p className="text-text-secondary">
+                            Inga produkter matchar de valda filtren.
+                        </p>
+                    )}
                 </div>
             </div>
         </main>

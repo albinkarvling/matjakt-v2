@@ -1,11 +1,11 @@
+import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 import { fetchJson } from "../../libs/http.ts";
+import type { Product } from "../../types/product.ts";
 import type {
     CityGrossApiProduct,
     CityGrossSearchResponse,
 } from "../../types/retailers/citygross.ts";
-import type { Product } from "../../types/product.ts";
 import { mapCityGrossProduct } from "./citygross.mapper.ts";
-import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 
 const CITY_GROSS_BASE_URL = "https://www.citygross.se";
 

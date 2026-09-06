@@ -2,7 +2,7 @@ import {
     getFreshCachedProductSearch,
     upsertCachedProductSearch,
 } from "../../../database/productSearchCache.ts";
-import type { ProductSearchResult, Retailer } from "../../types/product.ts";
+import type { ProductSearchResponse, Retailer } from "../../types/product.ts";
 import { normalizeSearchQuery } from "./normalizeSearchQuery.ts";
 import { searchAllProducts } from "./searchProducts.ts";
 
@@ -14,7 +14,7 @@ type SearchOptions = {
     retailers?: Retailer[];
 };
 
-export type CachedSearchResult = ProductSearchResult & {
+export type CachedSearchResult = ProductSearchResponse & {
     cache: {
         hit: boolean;
         fetchedAt: string;

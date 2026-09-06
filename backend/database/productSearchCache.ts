@@ -1,14 +1,14 @@
-import type { ProductSearchResult } from "../src/types/product.ts";
+import type { ProductSearchResponse } from "../src/types/product.ts";
 import { database } from "./database.ts";
 
 type CacheRow = {
-    response: ProductSearchResult;
+    response: ProductSearchResponse;
     fetched_at: Date;
     expires_at: Date;
 };
 
 export type CachedProductSearch = {
-    result: ProductSearchResult;
+    result: ProductSearchResponse;
     fetchedAt: Date;
     expiresAt: Date;
 };
@@ -49,7 +49,7 @@ export async function upsertCachedProductSearch({
 }: {
     normalizedQuery: string;
     scopeKey: string;
-    result: ProductSearchResult;
+    result: ProductSearchResponse;
     ttlHours: number;
 }): Promise<void> {
     await database.query(

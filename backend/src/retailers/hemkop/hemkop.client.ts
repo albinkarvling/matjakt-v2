@@ -1,10 +1,7 @@
 import { MAX_PAGE_SIZE } from "../../constants/requestInfo.ts";
 import { BROWSER_USER_AGENT, fetchJson } from "../../libs/http.ts";
 import type { Product } from "../../types/product.ts";
-import type {
-    WillysApiProduct,
-    WillysSearchResponse,
-} from "../../types/retailers/axfood.ts";
+import type { WillysApiProduct, WillysSearchResponse } from "../../types/retailers/axfood.ts";
 import { mapAxfoodProduct } from "../axfood/axfood.mapper.ts";
 
 const HEMKOP_BASE_URL = "https://www.hemkop.se";
@@ -39,8 +36,6 @@ export async function searchHemkopProducts({
     });
 
     return response.results
-        .map((product: WillysApiProduct) =>
-            mapAxfoodProduct(product, "hemkop"),
-        )
+        .map((product: WillysApiProduct) => mapAxfoodProduct(product, "hemkop"))
         .filter((product): product is Product => product !== null);
 }

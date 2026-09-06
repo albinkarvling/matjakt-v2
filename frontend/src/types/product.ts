@@ -11,6 +11,8 @@ export type UnitPrice = {
     unitName: string;
 };
 
+export type PriceBasis = "item" | "kilogram" | "liter" | "unknown";
+
 export type Product = {
     retailer: Retailer;
     retailerProductId: string;
@@ -24,6 +26,7 @@ export type Product = {
 
     price: Money;
     unitPrice: UnitPrice | null;
+    priceBasis: PriceBasis;
 
     imageUrl: string | null;
     available: boolean | null;
@@ -77,6 +80,18 @@ export type ProductScoreDetails = {
     mismatchPenalty: number;
 };
 
+export type ProductFilterOption = {
+    value: string;
+    label: string;
+    count: number;
+};
+
+export type ProductFilter = {
+    id: "quantity";
+    label: string;
+    options: ProductFilterOption[];
+};
+
 export type ProductGroup = {
     key: string;
     gtin: string | null;
@@ -84,4 +99,9 @@ export type ProductGroup = {
     offers: SearchProduct[];
     score: number;
     scoreDetails: ProductScoreDetails;
+};
+
+export type SearchProductResponse = {
+    groups: ProductGroup[];
+    filters: ProductFilter[];
 };

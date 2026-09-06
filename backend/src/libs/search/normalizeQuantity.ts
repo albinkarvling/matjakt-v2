@@ -1,22 +1,16 @@
 import type { NormalizedQuantity } from "../../types/product.ts";
 import { normalizeText } from "./normalizeText.ts";
 
-export function normalizeQuantity(
-    packageSize: string | null,
-): NormalizedQuantity | null {
+export function normalizeQuantity(packageSize: string | null): NormalizedQuantity | null {
     if (!packageSize) {
         return null;
     }
 
     const text = normalizeText(packageSize);
 
-    const approximate =
-        /\b(ca|cirka|ungefar|ungefarlig)\b/.test(text) ||
-        text.startsWith("ca");
+    const approximate = /\b(ca|cirka|ungefar|ungefarlig)\b/.test(text) || text.startsWith("ca");
 
-    const match = text.match(
-        /(\d+(?:\.\d+)?)\s*(kilogram|kg|gram|g|liter|litre|l|dl|cl|ml)\b/,
-    );
+    const match = text.match(/(\d+(?:\.\d+)?)\s*(kilogram|kg|gram|g|liter|litre|lit|l|dl|cl|ml)\b/);
 
     if (!match) {
         return null;
@@ -44,6 +38,7 @@ export function normalizeQuantity(
 
         case "liter":
         case "litre":
+        case "lit":
         case "l":
             return {
                 value: amount * 1000,

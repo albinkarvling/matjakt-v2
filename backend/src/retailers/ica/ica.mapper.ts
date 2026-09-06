@@ -1,11 +1,9 @@
-import { normalizeGtin } from "../../libs/gtin.ts";
+// import { normalizeGtin } from "../../libs/gtin.ts";
 import { cleanBrand, forceHttps, toMoney } from "../../libs/product.ts";
-import type { IcaProduct } from "../../types/retailers/ica.ts";
 import type { Product, UnitPrice } from "../../types/product.ts";
+import type { IcaProduct } from "../../types/retailers/ica.ts";
 
-export function mapIcaProduct(
-    raw: IcaProduct,
-): Product {
+export function mapIcaProduct(raw: IcaProduct): Product {
     const retailerProductId = String(raw.retailerProductId);
 
     let unitPrice: UnitPrice | null = null;
@@ -31,6 +29,7 @@ export function mapIcaProduct(
 
         price: toMoney(raw.price.amount),
         unitPrice,
+        priceBasis: "item",
 
         imageUrl: forceHttps(raw.image?.src),
         available: raw.available ?? null,

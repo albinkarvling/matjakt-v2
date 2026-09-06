@@ -11,6 +11,8 @@ export type UnitPrice = {
     unitName: string;
 };
 
+export type PriceBasis = "item" | "kilogram" | "liter" | "unknown";
+
 export type Product = {
     retailer: Retailer;
     retailerProductId: string;
@@ -23,6 +25,7 @@ export type Product = {
     packageSize: string | null;
 
     price: Money;
+    priceBasis: PriceBasis;
     unitPrice: UnitPrice | null;
 
     imageUrl: string | null;
@@ -31,6 +34,7 @@ export type Product = {
 
 export type ProductCategory =
     | "milk"
+    | "flavored-milk"
     | "plant-drink"
     | "ground-beef"
     | "mixed-mince"
@@ -101,7 +105,20 @@ export type RetailerResult = {
     error: string | null;
 };
 
-export type ProductSearchResult = {
+export type ProductFilterOption = {
+    value: string;
+    label: string;
+    count: number;
+};
+
+export type ProductFilter = {
+    id: "quantity";
+    label: string;
+    options: ProductFilterOption[];
+};
+
+export type ProductSearchResponse = {
     groups: ProductGroup[];
     retailers: RetailerResult[];
+    filters: ProductFilter[];
 };

@@ -9,6 +9,20 @@ export const SearchResult = ({ group }: Props) => {
     const { canonicalProduct: product, offers } = group;
 
     const cheapestOffer = offers.at(0);
+
+    const formattedPrice =
+        product.priceBasis === "kilogram"
+            ? `${product.price.amount} kr/kg`
+            : product.priceBasis === "liter"
+              ? `${product.price.amount} kr/l`
+              : `${product.price.amount} kr`;
+
+    const priceHeading =
+        product.priceBasis === "kilogram"
+            ? "Kilopris"
+            : product.priceBasis === "liter"
+              ? "Literpris"
+              : "Lägsta pris";
     return (
         <div
             className="p-5 flex gap-5 bg-bg-secondary border border-bg-tertiary rounded-lg"
@@ -33,8 +47,8 @@ export const SearchResult = ({ group }: Props) => {
                         </div>
                     </div>
                     <div className="flex items-end flex-col">
-                        <span className="text-text-secondary">Lägsta pris</span>
-                        <span className="text-2xl font-bold">{cheapestOffer?.price.amount} kr</span>
+                        <span className="text-text-secondary">{priceHeading}</span>
+                        <span className="text-2xl font-bold">{formattedPrice}</span>
                         <span className="text-sm text-text-secondary">
                             {cheapestOffer?.unitPrice?.price.amount} kr/
                             {cheapestOffer?.unitPrice?.unitName}

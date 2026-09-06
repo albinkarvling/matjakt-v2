@@ -1,7 +1,28 @@
 import { normalizeGtin } from "../../libs/gtin.ts";
 import { cleanBrand, forceHttps, toMoney } from "../../libs/product.ts";
+import type { PriceBasis, Product, UnitPrice } from "../../types/product.ts";
 import type { CityGrossApiProduct } from "../../types/retailers/citygross.ts";
-import type { Product, UnitPrice } from "../../types/product.ts";
+
+function mapPriceBasis(unit: string | null): PriceBasis {
+    switch (unit?.trim().toUpperCase()) {
+        case "KGM":
+        case "KG":
+            return "kilogram";
+
+        case "LTR":
+        case "L":
+            return "liter";
+
+        case "EA":
+        case "PCE":
+        case "H87":
+        case "ST":
+            return "item";
+
+        default:
+            return "unknown";
+    }
+}
 
 export function mapCityGrossProduct(raw: CityGrossApiProduct): Product | null {
     const sellable = (
@@ -41,6 +62,7 @@ export function mapCityGrossProduct(raw: CityGrossApiProduct): Product | null {
 
         price: toMoney(currentPrice.price),
         unitPrice,
+        priceBasis: mapPriceBasis(currentPrice.unit),
 
         imageUrl: forceHttps(raw.images?.[0]?.url) ?? null,
 
